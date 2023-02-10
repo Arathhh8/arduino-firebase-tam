@@ -1,35 +1,38 @@
-// Include WiFi.h
 #include <NewPing.h>
 #include <WiFi.h>
-
-// Include Firebase ESP32 library (this library)
 #include <FirebaseESP32.h>
 
-#define WIFI_SSID "Megacable_2.4G_2C78"
-#define WIFI_PASSWORD "paGfeqU7"
+#define WIFI_SSID "Megacable_2.4G_DFCE"
+#define WIFI_PASSWORD "TAxKA2ES"
 
 #define FIREBASE_HOST "fir-tam-arduino-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "EseNGxrWBBmZd9ydPKWSae6Bh4DPQULxU67RFtW1"
 
 FirebaseData firebaseData;
 
-#define pinPot 33
-#define trigPin 19
-#define echoPin 18
-
 // Define maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500 cm:
 #define MAX_DISTANCE 400
-// NewPing setup of pins and maximum distance.
-NewPing sonar = NewPing(trigPin, echoPin, MAX_DISTANCE);
-//termina la configuracion del sensor
+#define pinPot 33
 
-int levelPot = 0;
+#define trigCis_1A 19
+#define echoCis_1A 18
+#define trigCis_2A 26
+#define echoCis_2A 25
+#define trigCis_3A 33
+#define echoCis_3A 32
+
+int levelPot = 0; // for testing only
 String nodo = "/";
 bool iterar = true;
+
+// NewPing setup of pins and maximum distance.
+NewPing cisterna_1A = NewPing(trigCis_1A, echoCis_1A, MAX_DISTANCE);
+NewPing cisterna_2A = NewPing(trigCis_2A, echoCis_2A, MAX_DISTANCE);
+NewPing cisterna_3A = NewPing(trigCis_3A, echoCis_3A, MAX_DISTANCE);
+
 int distanciaSA1 = 0;
 float ancho = 3;
 float largo = 3;
-
 
 void setup() {
   
@@ -52,42 +55,22 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
-
-  while(iterar){
-
-    Firebase.getInt(firebaseData, nodo + "sensor");
-    Serial.println(firebaseData.intData());
-
-    Firebase.getInt(firebaseData, nodo + "temperature");
-    Serial.println(firebaseData.stringData());
-
-    iterar = false;
-    //Firebase.end(firebaseData);
-  }
-
-  levelPot = analogRead(pinPot) * 100 / 4095;
-  Serial.println(levelPot);
   delay(1000);
-  Firebase.setFloat(firebaseData, nodo + "/temperatureReal/temp", levelPot);
-  //Firebase.setFloat(firebaseData, nodo + "temperature", 0);
-  sensorValue();
-
-
+ 
+  leerCisterna("cisterna1", cisterna_1A);
+  leerCisterna("cisterna2", cisterna_2A);
+  leerCisterna("cisterna3", cisterna_3A);
 }
 
-void sensorValue(){
-  float valor_distancia_1 = sonar.ping_cm();// Leemos la distancia en cm
+void leerCisterna(const char* nombre, NewPing cisterna){
+  float valor_distancia_1 = cisterna.ping_cm();
   float valor_distancia = valor_distancia_1;
-  //float valor_distancia = valor_distancia_1*ancho*largo;
-
-  // sensor de distancia en cm
-
-// Measure distance and print to the Serial Monitor:
-  Serial.print("Distancia = ");
-  // Send ping, get distance in cm and print result (0 = outside set distance range):
+  
+  Serial.print("Distancia ");
+  Serial.print(nombre);
+  Serial.print(" = ");
   Serial.print(valor_distancia); 
   Serial.println(" Mts3");
-  Firebase.setFloat(firebaseData, nodo + "/SalaA/cisterna1", valor_distancia);
+
+  Firebase.setFloat(firebaseData, nodo + "/SalaA/" + nombre, valor_distancia);
 }
