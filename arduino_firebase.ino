@@ -2,11 +2,11 @@
 #include <WiFi.h>
 #include <FirebaseESP32.h>
 
-//#define WIFI_SSID "iPhoneX"
-//#define WIFI_PASSWORD "01234567"
+#define WIFI_SSID "iPhoneX"
+#define WIFI_PASSWORD "01234567"
 
-#define WIFI_SSID "Megcable_2.4G_96B4"
-#define WIFI_PASSWORD "jackito11"
+//#define WIFI_SSID "Megcable_2.4G_96B4"
+//#define WIFI_PASSWORD "jackito11"
 
 //#define WIFI_SSID "UlisesF"
 //#define WIFI_PASSWORD "z28s5jww"
@@ -53,15 +53,16 @@ void setup() {
 }
 
 void loop() {
-  delay(1000);
+  delay(3000);
  
   leerCisterna("cisterna1", cisterna_1A);
+  //leerCisterna("cisterna2", cisterna_2A);
+  //leerCisterna("cisterna3", cisterna_3A);
 }
 
 void leerCisterna(const char* nombre, NewPing cisterna){
-  float valor_distancia_1 = cisterna.ping_cm();
-  float valor_distancia = valor_distancia_1;
-  float valorPorcentaje = map(valor_distancia, 0, 230, 0, 100);
+  float valor_distancia = cisterna.ping_cm();
+  float valorPorcentaje = map(valor_distancia, 230, 0, 0, 100);
   
   Serial.print("Distancia ");
   Serial.print(nombre);
