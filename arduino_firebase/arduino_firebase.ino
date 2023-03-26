@@ -13,7 +13,6 @@ void setup() {
 }
 
 void loop() {
-  delay(3000);
  
   readAndSendDistance("cisterna1", cistern_1A);
   readAndSendDistance("cisterna2", cistern_2A);
